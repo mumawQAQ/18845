@@ -17,6 +17,23 @@ public class NoteController {
     private final Map<Integer, Note> notes = new HashMap<>();
     private final AtomicInteger noteIdCounter = new AtomicInteger(1);
 
+    private String generateString(int length, String base) {
+        return String.format("%1$-" + length + "s", base).substring(0, length);
+    }
+
+    @PostMapping("/init_notes")
+    @ResponseStatus(HttpStatus.OK)
+    public String initNotes() {
+        notes.clear();
+        for (int i = 1; i <= 10000; i++) {
+            int id = noteIdCounter.getAndIncrement();
+            notes.put(id, new Note(id,
+                                   generateString(10, "Title " + i),
+                                   generateString(100, "Content " + i)));
+        }
+        return "10,000 notes initialized";
+    }
+
     @PostMapping
     public ResponseEntity<Note> createNote(@RequestBody Note note) {
         int noteId = noteIdCounter.getAndIncrement();

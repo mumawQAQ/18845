@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"gin_webserver/web_structs"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"sync"
+
+	"github.com/gin-gonic/gin"
 )
 
 var notes = make(map[int]*web_structs.Note)
@@ -176,10 +177,31 @@ func deleteFile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "File deleted successfully"})
 }
 
+func generateString(length int, base string) string {
+	return fmt.Sprintf("%-*.*s", length, length, base)
+}
+
+func initNotes(c *gin.Context) {
+	notesMutex.Lock()
+	defer notesMutex.Unlock()
+
+	notes = make(map[int]*web_structs.Note)
+	for i := 1; i <= 10000; i++ {
+		note := &web_structs.Note{
+			ID:      i,
+			Title:   generateString(10, "Title "+strconv.Itoa(i)),
+			Content: generateString(100, "Content "+strconv.Itoa(i)),
+		}
+		notes[i] = note
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "10,000 notes initialized"})
+}
+
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	// Register the CRUD operation endpoints
+	r.POST("/init_notes", initNotes)
 	r.POST("/notes", createNote)
 	r.GET("/notes", getAllNotes)
 	r.GET("/notes/:id", getNoteByID)
