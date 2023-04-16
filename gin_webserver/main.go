@@ -177,8 +177,8 @@ func deleteFile(c *gin.Context) {
 }
 
 func main() {
-	r := gin.Default()
-
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
 	// Register the CRUD operation endpoints
 	r.POST("/notes", createNote)
 	r.GET("/notes", getAllNotes)
