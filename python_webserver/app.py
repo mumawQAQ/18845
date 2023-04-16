@@ -94,7 +94,6 @@ def delete_note_by_id(note_id):
 def generate_string(length, base):
     return (base * (length // len(base) + 1))[:length]
 
-@app.route('/init_notes', methods=['POST'])
 def init_notes():
     global notes, note_id_counter
     notes = defaultdict(note.Note)
@@ -104,7 +103,8 @@ def init_notes():
                              content=generate_string(100, f"Content {i}"))
         notes[note_id_counter] = new_note
         note_id_counter += 1
-    return jsonify(message="10,000 notes initialized")
+
+init_notes()  # Call the function during server initialization
 
 
 if __name__ == "__main__":
