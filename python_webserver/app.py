@@ -6,7 +6,7 @@ import note
 
 app = Flask(__name__)
 UPLOADS_DIR = "uploads"
-notes = defaultdict(note.Note)
+notes = {}
 note_id_counter = 1
 
 
@@ -96,16 +96,15 @@ def generate_string(length, base):
 
 def init_notes():
     global notes, note_id_counter
-    notes = defaultdict(note.Note)
+    notes = {}
     for i in range(1, 10001):
-        new_note = note.Note(note_id=i,
+        new_note = note.Note(id=i,
                              title=generate_string(10, f"Title {i}"),
                              content=generate_string(100, f"Content {i}"))
         notes[note_id_counter] = new_note
         note_id_counter += 1
 
-init_notes()  # Call the function during server initialization
-
+init_notes()
 
 if __name__ == "__main__":
     app.run()
